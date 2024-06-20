@@ -1,29 +1,57 @@
-import Link from 'next/link';
-import NavLinks from '@/app/ui/dashboard/nav-links';
-import AcmeLogo from '@/app/ui/acme-logo';
-import { PowerIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useRef } from 'react';
+import NavLinks from './nav-links';
 
-export default function SideNav() {
+interface SideNavProps {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+const SideNav: React.FC<SideNavProps> = ({ isOpen, toggleSidebar }) => {
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        toggleSidebar();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, toggleSidebar]);
+
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
-      <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
-        href="/"
+    <div className='flex'>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-20 transition-opacity bg-black opacity-50 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+      <div
+        ref={sidebarRef}
+        className={`fixed inset-y-0 left-0 z-30 w-72 overflow-y-auto transition duration-300 transform bg-[#14244B]
+          ${isOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'}
+          lg:translate-x-0 lg:static lg:inset-0`}
       >
-        <div className="w-32 text-white md:w-40">
-          <AcmeLogo />
+        <div className="flex items-center justify-center mt-8">
+          <div className="flex items-center flex-col">
+            <img className="w-[115px] h-[44px]" src="/logo.svg" alt="Logo" />
+          </div>
         </div>
-      </Link>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
-        <form>
-          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-            <PowerIcon className="w-6" />
-            <div className="hidden md:block">Sign Out</div>
-          </button>
-        </form>
+        <nav className="mt-10">
+          <NavLinks />
+        </nav>
       </div>
     </div>
   );
-}
+};
+
+export default SideNav;
