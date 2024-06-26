@@ -4,6 +4,7 @@ const {
   customers,
   revenue,
   users,
+  requests,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -159,7 +160,45 @@ async function seedRevenue(client) {
     throw error;
   }
 }
+async function seedRequests(client) {
+  try {
+    // Create the "requests" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS requests (
+        id VARCHAR(36) PRIMARY KEY,
+        emp_id VARCHAR(10) NOT NULL,
+        type VARCHAR(20) NOT NULL,
+        date DATE NOT NULL,
+        days INT NOT NULL,
+        status VARCHAR(10) NOT NULL,
+        reason TEXT
+      );
+    `;
 
+    console.log(`Created "requests" table`);
+
+    // Insert data into the "requests" table
+    const insertedRequests = await Promise.all(
+      requests.map(
+        (req) => client.sql`
+        INSERT INTO requests (id, emp_id, type, date, days, status, reason)
+        VALUES (${req.id}, ${req.emp_id}, ${req.type}, ${req.date}, ${req.days}, ${req.status}, ${req.reason})
+        ON CONFLICT (id) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedRequests.length} requests`);
+
+    return {
+      createTable,
+      requests: insertedRequests,
+    };
+  } catch (error) {
+    console.error('Error seeding requests:', error);
+    throw error;
+  }
+}
 async function main() {
   const client = await db.connect();
 
@@ -167,6 +206,7 @@ async function main() {
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+  await seedRequests(client);
 
   await client.end();
 }

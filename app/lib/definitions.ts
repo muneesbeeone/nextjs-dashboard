@@ -86,3 +86,12 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+export type RequestTable = {
+  id: string;
+  emp_id: string;
+  type: string;
+  date: String;
+  days: string;
+  status: 'pending' | 'paid';
+  reason: string;
+};

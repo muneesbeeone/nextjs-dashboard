@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -6,6 +6,8 @@ interface AddRequestModalProps {
     isOpen: boolean;
     onClose: () => void;
     onAddRequest: (newRequest: RequestItem) => void;
+    onEditRequest: (updatedRequest: RequestItem) => void;
+    existingRequest?: RequestItem | null;
 }
 
 interface RequestItem {
@@ -17,24 +19,55 @@ interface RequestItem {
     status: string;
 }
 
-const AddRequestModal: React.FC<AddRequestModalProps> = ({ isOpen, onClose, onAddRequest }) => {
-    const [requestType, setRequestType] = useState('Leave');
-    const [duration, setDuration] = useState('Single Day');
+const AddRequestModal: React.FC<AddRequestModalProps> = ({ isOpen, onClose, onAddRequest, onEditRequest, existingRequest }) => {
+    const [requestType, setRequestType] = useState('');
+    const [duration, setDuration] = useState('');
     const [date, setDate] = useState<Date | null>(null);
     const [comments, setComments] = useState('');
     const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
     const [daysDropdownOpen, setDaysDropdownOpen] = useState(false);
 
-    const handleAddRequest = () => {
-        onAddRequest({
-            id: Date.now(),
+    useEffect(() => {
+        if (existingRequest) {
+            setRequestType(existingRequest.requestType);
+            setDuration(existingRequest.duration);
+            setDate(existingRequest.dates ? new Date(existingRequest.dates) : null);
+            setComments(existingRequest.Reason);
+        } else {
+            resetForm();
+        }
+    }, [existingRequest]);
+
+    const resetForm = () => {
+        setRequestType('');
+        setDuration('');
+        setDate(null);
+        setComments('');
+    };
+
+    const handleAddOrEditRequest = () => {
+        const newRequest: RequestItem = {
+            id: existingRequest ? existingRequest.id : Date.now(),
             requestType,
-            dates: date ? date.toISOString().split('T')[0] : '',
+            dates: date ? formatDate(date) : '',
             duration,
             Reason: comments,
-            status: 'Pending',
-        });
+            status: existingRequest ? existingRequest.status : 'Pending',
+        };
+
+        if (existingRequest) {
+            onEditRequest(newRequest);
+        } else {
+            onAddRequest(newRequest);
+        }
         onClose();
+    };
+
+    const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
     };
 
     if (!isOpen) return null;
@@ -45,7 +78,7 @@ const AddRequestModal: React.FC<AddRequestModalProps> = ({ isOpen, onClose, onAd
                 <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
                 <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                     <div className="bg-[#CFDEFE] px-5 py-6 flex items-center justify-between">
-                        <p className="text-base font-bold">Create a New Request</p>
+                        <p className="text-base font-bold">{existingRequest ? 'Edit Request' : 'Create a New Request'}</p>
                     </div>
                     <div className="px-6 py-4 text-left">
                         <label className="block">Request Type</label>
@@ -121,10 +154,10 @@ const AddRequestModal: React.FC<AddRequestModalProps> = ({ isOpen, onClose, onAd
 
                         <div className="flex justify-start pt-2 gap-2">
                             <button
-                                onClick={handleAddRequest}
+                                onClick={handleAddOrEditRequest}
                                 className="px-4 flex items-center py-2 text-sm font-semibold text-white bg-[#14244B] rounded-md hover:bg-gray-400"
                             >
-                                Submit
+                                {existingRequest ? 'Update' : 'Submit'}
                             </button>
                             <button
                                 onClick={onClose}

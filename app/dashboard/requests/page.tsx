@@ -2,42 +2,71 @@
 import { useState } from 'react';
 import AddRequestModal from '@/app/ui/requests/AddRequestModal';
 import FilterDropdown from '@/app/ui/requests/FilterDropdown';
-import RequestTable from '@/app/ui/requests/ReqestTable';
-interface RequestItem {
-  id: number;
-  requestType: string;
-  dates: string;
-  duration: string;
-  Reason: string;
-  status: string;
-}
+import ViewRequestModal from '@/app/ui/requests/ViewRequestModal';
+import RequestsTable from '@/app/ui/requests/ReqestTable';
+import { RequestTable } from '@/app/lib/definitions';
 
-const mockData: RequestItem[] = [
-  { id: 1, requestType: 'LOP Leave', dates: '25 to 30/05/2024', duration: '6 Days', Reason: 'Attending a family function...', status: 'Pending' },
-  { id: 2, requestType: 'LOP Leave', dates: '25 to 30/05/2024', duration: '6 Days', Reason: 'Attending a family function...', status: 'Pending' }
-];
+
 
 const Home: React.FC = () => {
-  const [data, setData] = useState<RequestItem[]>(mockData);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<RequestTable | null>(null);
 
   const openModal = () => {
+    setSelectedRequest(null); // Reset selectedRequest for adding a new request
     setIsModalOpen(true);
+  };
+
+  const editModalOpen = (item: RequestTable) => {
+    setSelectedRequest(item);
+    setIsModalOpen(true);
+  };
+
+  const viewModalOpen = (item: RequestTable) => {
+    setSelectedRequest(item);
+    setIsViewModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const handleAddRequest = (newRequest: RequestItem) => {
-    setData([...data, newRequest]);
+  const closeViewModal = () => {
+    setIsViewModalOpen(false);
   };
 
+  // const handleAddRequest = (newRequest: RequestTable) => {
+  //   setData([...data, newRequest]);
+  //   closeModal();
+  // };
+
+  // const handleEditRequest = (updatedRequest: RequestTable) => {
+  //   const updatedData = data.map(request => 
+  //     request.id === updatedRequest.id ? updatedRequest : request
+  //   );
+  //   setData(updatedData);
+  //   closeModal();
+  // };
+
   return (
-    <div className=" mx-auto px-4">
+    <div className="mx-auto px-4">
       <FilterDropdown openModal={openModal} />
-      <RequestTable data={data} />
-      <AddRequestModal isOpen={isModalOpen} onClose={closeModal} onAddRequest={handleAddRequest} />
+      <RequestsTable  onView={viewModalOpen} onEdit={editModalOpen}/>
+      {/* <AddRequestModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal}  
+      /> */}
+      {/* <AddRequestModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        onAddRequest={handleAddRequest}
+        onEditRequest={handleEditRequest} 
+        existingRequest={selectedRequest} 
+      /> */}
+      {/* {selectedRequest && (
+        <ViewRequestModal isOpen={isViewModalOpen} onClose={closeViewModal} request={selectedRequest} />
+      )} */}
     </div>
   );
 };

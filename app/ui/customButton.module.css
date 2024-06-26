@@ -1,0 +1,38 @@
+/* components/customButton.module.css */
+
+.customButton {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .customButton:hover {
+    background-color: #e0e0e0; /* Hover background color */
+  }
+  
+  .icon {
+    margin-right: 10px; /* Spacing between icon and text */
+  }
+  
+  .primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .secondary:hover {
+    background-color: #5a6268;
+  }
+  

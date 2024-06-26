@@ -7,6 +7,7 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  RequestTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -227,5 +228,41 @@ export async function getUser(email: string) {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+export async function fetchFilteredRequests() {
+
+  try {
+    const requests = await sql<RequestTable>`
+      SELECT * FROM requests
+    `;
+
+    return requests.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch requests.');
+  }
+}
+
+export async function fetchRequestsPages(query: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM requests
+      JOIN employees ON requests.emp_id = employees.id
+      WHERE
+        employees.name ILIKE ${`%${query}%`} OR
+        employees.email ILIKE ${`%${query}%`} OR
+        requests.type ILIKE ${`%${query}%`} OR
+        requests.date::text ILIKE ${`%${query}%`} OR
+        requests.status ILIKE ${`%${query}%`} OR
+        requests.reason ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of requests.');
   }
 }

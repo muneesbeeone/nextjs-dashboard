@@ -1,6 +1,6 @@
 import React from 'react'
 
-function page() {
+function Page() {
   return (
     <div>
     <div className =" bg-white p-4 pb-8 relative rounded-2xl">
@@ -47,4 +47,4 @@ function page() {
   )
 }
 
-export default page
+export default Page

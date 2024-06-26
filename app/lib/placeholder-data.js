@@ -179,10 +179,57 @@ const revenue = [
   { month: 'Nov', revenue: 3000 },
   { month: 'Dec', revenue: 4800 },
 ];
-
+const requests = [
+  {
+    id: 'uuid-1',
+    emp_id: 'E001',
+    type: 'Leave',
+    date: new Date().toISOString().split('T')[0],
+    days: 2,
+    status: 'pending',
+    reason: 'Medical leave',
+  },
+  {
+    id: 'uuid-2',
+    emp_id: 'E002',
+    type: 'Work From Home',
+    date: new Date().toISOString().split('T')[0],
+    days: 1,
+    status: 'paid',
+    reason: 'Family event',
+  },
+  {
+    id: 'uuid-3',
+    emp_id: 'E003',
+    type: 'Leave',
+    date: new Date().toISOString().split('T')[0],
+    days: 3,
+    status: 'pending',
+    reason: 'Vacation',
+  },
+  {
+    id: 'uuid-4',
+    emp_id: 'E004',
+    type: 'Leave',
+    date: new Date().toISOString().split('T')[0],
+    days: 5,
+    status: 'paid',
+    reason: 'Personal reasons',
+  },
+  {
+    id: 'uuid-5',
+    emp_id: 'E005',
+    type: 'Work From Home',
+    date: new Date().toISOString().split('T')[0],
+    days: 1,
+    status: 'pending',
+    reason: 'Project deadline',
+  },
+];
 module.exports = {
   users,
   customers,
   invoices,
   revenue,
+  requests,
 };
