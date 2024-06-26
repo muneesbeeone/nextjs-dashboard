@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import NavLinks from './nav-links';
+import Image from 'next/image';
 
 interface SideNavProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ const SideNav: React.FC<SideNavProps> = ({ isOpen, toggleSidebar }) => {
       >
         <div className="flex items-center justify-center mt-8">
           <div className="flex items-center flex-col">
-            <img className="w-[115px] h-[44px]" src="/logo.svg" alt="Logo" />
+            <Image width={115} height={44} className="w-[115px] h-[44px]" src="/logo.svg" alt="Logo" />
           </div>
         </div>
         <nav className="mt-10">

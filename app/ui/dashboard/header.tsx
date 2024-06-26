@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -48,9 +49,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="relative z-10 block w-8 h-8 overflow-hidden rounded-full shadow focus:outline-none"
           >
-            <img
+            <Image width={50} height={50}
               className="object-cover w-full h-full"
-              src="https://images.unsplash.com/photo-1528892952291-009c663ce843?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=296&q=80"
+              src="/logo.svg"
               alt="Your avatar"
             />
           </button>
